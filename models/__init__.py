@@ -1,10 +1,8 @@
 from .schemas import (
     SimilarCompany,
     OceanResult,
-    DecisionMaker,
-    ProspeoResult,
     VerifiedContact,
-    EazyreachResult,
+    ProspeoResult,
     SentEmail,
     BrevoResult,
     PipelineState,
@@ -13,10 +11,8 @@ from .schemas import (
 __all__ = [
     "SimilarCompany",
     "OceanResult",
-    "DecisionMaker",
-    "ProspeoResult",
     "VerifiedContact",
-    "EazyreachResult",
+    "ProspeoResult",
     "SentEmail",
     "BrevoResult",
     "PipelineState",

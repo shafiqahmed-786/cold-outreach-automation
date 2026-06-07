@@ -2,7 +2,7 @@
 # Pin minor versions for reproducibility; patch updates are safe.
 
 # Async HTTP
-aiohttp==3.9.5
+aiohttp-stubs==0.2.2
 
 # Data validation & serialisation
 pydantic==2.7.1
@@ -16,6 +16,3 @@ rich==13.7.1
 # Testing
 pytest==8.2.0
 pytest-asyncio==0.23.6
-
-# Type stubs (dev only – remove for production deploys)
-aiohttp-stubs==0.2.2; python_version >= "3.11"

@@ -17,7 +17,7 @@ class Config:
     # ------------------------------------------------------------------
     # Apollo.io  (Stage 1 – similar company discovery)
     #
-    # Replaces Ocean.io. Confirmed endpoints (docs.apollo.io, June 2026):
+    # Confirmed endpoints (docs.apollo.io, June 2026):
     #   Enrichment : GET  /api/v1/organizations/enrich?domain=…
     #   Search     : POST /api/v1/mixed_companies/search  (params in URL)
     # Auth         : x-api-key header (not Bearer)
@@ -26,26 +26,28 @@ class Config:
     APOLLO_BASE_URL: str = os.getenv(
         "APOLLO_BASE_URL", "https://api.apollo.io/api/v1"
     )
-    # How many similar companies to collect (Apollo max per_page = 100).
     APOLLO_SIMILAR_LIMIT: int = int(os.getenv("APOLLO_SIMILAR_LIMIT", "10"))
 
     # ------------------------------------------------------------------
-    # Prospeo
+    # Prospeo  (Stage 2 – decision-maker discovery + email enrichment)
+    #
+    # Confirmed endpoints (prospeo.io/api-docs, May 2026):
+    #   Search  : POST https://api.prospeo.io/search-person
+    #   Enrich  : POST https://api.prospeo.io/bulk-enrich-person
+    # Auth      : X-KEY header
+    # Note      : New API has NO /v1 prefix; old /domain-search removed March 2026.
     # ------------------------------------------------------------------
     PROSPEO_API_KEY: str = os.getenv("PROSPEO_API_KEY", "")
-    # TODO: Verify endpoint – inferred from Prospeo public API reference.
-    PROSPEO_BASE_URL: str = os.getenv("PROSPEO_BASE_URL", "https://api.prospeo.io/v1")
-    PROSPEO_SENIORITY_FILTER: list[str] = ["c_suite", "vp"]  # maps to API seniority codes
+    PROSPEO_BASE_URL: str = os.getenv("PROSPEO_BASE_URL", "https://api.prospeo.io")
+
+    # Seniority filter values – must match Prospeo's enum exactly.
+    PROSPEO_SENIORITY_FILTER: list[str] = ["C-Suite", "VP"]
+
+    # Max persons to collect per company domain.
+    PROSPEO_SEARCH_LIMIT: int = int(os.getenv("PROSPEO_SEARCH_LIMIT", "25"))
 
     # ------------------------------------------------------------------
-    # Eazyreach
-    # ------------------------------------------------------------------
-    EAZYREACH_API_KEY: str = os.getenv("EAZYREACH_API_KEY", "")
-    # TODO: Verify endpoint – inferred from Eazyreach documentation snippets.
-    EAZYREACH_BASE_URL: str = os.getenv("EAZYREACH_BASE_URL", "https://api.eazyreach.io/v1")
-
-    # ------------------------------------------------------------------
-    # Brevo (formerly Sendinblue)
+    # Brevo  (Stage 3 – transactional email sending)
     # ------------------------------------------------------------------
     BREVO_API_KEY: str = os.getenv("BREVO_API_KEY", "")
     BREVO_BASE_URL: str = os.getenv("BREVO_BASE_URL", "https://api.brevo.com/v3")
@@ -58,8 +60,8 @@ class Config:
     STATE_FILE: str = os.getenv("STATE_FILE", "pipeline_state.json")
     LOG_FILE: str = os.getenv("LOG_FILE", "logs/pipeline.log")
     MAX_RETRIES: int = int(os.getenv("MAX_RETRIES", "3"))
-    RETRY_BASE_DELAY: float = float(os.getenv("RETRY_BASE_DELAY", "1.0"))  # seconds
-    REQUEST_TIMEOUT: int = int(os.getenv("REQUEST_TIMEOUT", "30"))          # seconds
+    RETRY_BASE_DELAY: float = float(os.getenv("RETRY_BASE_DELAY", "1.0"))
+    REQUEST_TIMEOUT: int = int(os.getenv("REQUEST_TIMEOUT", "30"))
     CONCURRENT_REQUESTS: int = int(os.getenv("CONCURRENT_REQUESTS", "5"))
 
 

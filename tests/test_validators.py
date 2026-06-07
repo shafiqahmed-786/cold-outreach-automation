@@ -1,16 +1,16 @@
 """
 Unit tests for utils/validators.py.
 
-These tests exercise the three deduplication helpers and the email
-syntax validator in isolation — no external I/O involved.
+Tests cover both dedup helpers and the email syntax validator.
+dedup_decision_makers has been removed (EazyReach stage removed);
+dedup_contacts is now the sole contact-level dedup function.
 """
 
 import pytest
 
-from models.schemas import SimilarCompany, DecisionMaker, VerifiedContact
+from models.schemas import SimilarCompany, VerifiedContact
 from utils.validators import (
     dedup_companies,
-    dedup_decision_makers,
     dedup_contacts,
     is_valid_email,
 )
@@ -53,51 +53,6 @@ class TestDedupCompanies:
 
 
 # ---------------------------------------------------------------------------
-# dedup_decision_makers
-# ---------------------------------------------------------------------------
-
-class TestDedupDecisionMakers:
-    def _make(self, domain: str, name: str, linkedin: str | None = "https://linkedin.com/in/x") -> DecisionMaker:
-        return DecisionMaker(domain=domain, full_name=name, linkedin_url=linkedin)
-
-    def test_removes_same_domain_and_name(self):
-        dms = [
-            self._make("adyen.com", "Elena Rossi"),
-            self._make("adyen.com", "Elena Rossi"),
-        ]
-        result = dedup_decision_makers(dms)
-        assert len(result) == 1
-
-    def test_keeps_same_name_different_domain(self):
-        dms = [
-            self._make("adyen.com", "Elena Rossi"),
-            self._make("stripe.com", "Elena Rossi"),
-        ]
-        result = dedup_decision_makers(dms)
-        assert len(result) == 2
-
-    def test_drops_entries_without_linkedin(self):
-        dms = [
-            self._make("adyen.com", "Elena Rossi", linkedin=None),
-            self._make("stripe.com", "Marcus Wei", linkedin="https://linkedin.com/in/mw"),
-        ]
-        result = dedup_decision_makers(dms)
-        assert len(result) == 1
-        assert result[0].full_name == "Marcus Wei"
-
-    def test_name_normalised_case_insensitive(self):
-        dms = [
-            self._make("adyen.com", "Elena Rossi"),
-            self._make("adyen.com", "ELENA ROSSI"),
-        ]
-        result = dedup_decision_makers(dms)
-        assert len(result) == 1
-
-    def test_empty_input_returns_empty(self):
-        assert dedup_decision_makers([]) == []
-
-
-# ---------------------------------------------------------------------------
 # dedup_contacts
 # ---------------------------------------------------------------------------
 
@@ -132,6 +87,14 @@ class TestDedupContacts:
 
     def test_empty_input_returns_empty(self):
         assert dedup_contacts([]) == []
+
+    def test_preserves_first_occurrence(self):
+        contacts = [
+            self._make("a@example.com", "Alice"),
+            self._make("a@example.com", "Alice Duplicate"),
+        ]
+        result = dedup_contacts(contacts)
+        assert result[0].full_name == "Alice"
 
 
 # ---------------------------------------------------------------------------

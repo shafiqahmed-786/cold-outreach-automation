@@ -80,13 +80,10 @@ Examples:
 
 def _render_final_summary(state) -> None:  # type: ignore[override]
     """Print the post-run summary panel."""
-    from models.schemas import PipelineState  # avoid top-level circular
-
     n_companies = len(state.ocean_result.companies) if state.ocean_result else 0
-    n_dms = len(state.prospeo_result.decision_makers) if state.prospeo_result else 0
-    n_verified = len(state.eazyreach_result.contacts) if state.eazyreach_result else 0
-    n_sent = len(state.brevo_result.emails_sent) if state.brevo_result else 0
-    n_failed = len(state.brevo_result.emails_failed) if state.brevo_result else 0
+    n_contacts  = len(state.prospeo_result.contacts) if state.prospeo_result else 0
+    n_sent      = len(state.brevo_result.emails_sent) if state.brevo_result else 0
+    n_failed    = len(state.brevo_result.emails_failed) if state.brevo_result else 0
 
     table = Table(
         box=box.ROUNDED,
@@ -95,13 +92,12 @@ def _render_final_summary(state) -> None:  # type: ignore[override]
         title="[bold green]Pipeline Complete[/bold green]",
         title_justify="left",
     )
-    table.add_column("Metric", style="dim", width=35)
+    table.add_column("Metric", style="dim", width=40)
     table.add_column("Count", justify="right", style="bold")
 
-    table.add_row("Similar companies discovered", str(n_companies))
-    table.add_row("Decision makers found", str(n_dms))
-    table.add_row("Verified emails obtained", str(n_verified))
-    table.add_row("[green]Emails sent[/green]", f"[green]{n_sent}[/green]")
+    table.add_row("Similar companies discovered   (Apollo)",   str(n_companies))
+    table.add_row("Verified contacts with emails  (Prospeo)", str(n_contacts))
+    table.add_row("[green]Emails sent[/green]              (Brevo)",   f"[green]{n_sent}[/green]")
     if n_failed:
         table.add_row("[red]Emails failed[/red]", f"[red]{n_failed}[/red]")
 
