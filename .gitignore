@@ -1,0 +1,26 @@
+# Environment
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Pipeline runtime files
+pipeline_state.json
+logs/*.log
+
+# Keep logs directory but not its content
+!logs/.gitkeep
+
+# Test artefacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editor
+.idea/
+.vscode/
+*.swp
